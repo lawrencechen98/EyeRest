@@ -2,6 +2,11 @@
 
 var countdownProgress = new Set();
 
+function audioNotification() {
+     var notificationSound = new Audio('audio/notification.mp3');
+     notificationSound.play();
+}
+
 chrome.runtime.onInstalled.addListener(function() {
      chrome.storage.sync.set({alarmToggle: false, minutes: 20}, function() {
           console.log("Eye Rest Timer extension installed. Alarm is currently off.");
@@ -19,7 +24,10 @@ chrome.alarms.onAlarm.addListener(function() {
           buttons: [
           {title: 'Turn off alarm.'}
           ],
-          priority: 2});
+          priority: 2},
+          function () {
+               audioNotification();
+          });
 });
 
 function sleep(ms) {
