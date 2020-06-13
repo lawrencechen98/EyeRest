@@ -1,0 +1,26 @@
+html {
+     width: 320px
+}
+
+input {
+     width: 50px;
+}
+
+h3 {
+    padding: 0px;
+    margin: 0px;
+}
+
+#popup {
+     padding: 20px;
+}
+
+#logo {
+     height: 50px;
+     margin: 10px;
+}
+
+.body {
+     margin-top: 10px;
+     margin-bottom: 10px;
+}
