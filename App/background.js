@@ -8,6 +8,7 @@ function audioNotification() {
 }
 
 chrome.runtime.onInstalled.addListener(function() {
+     chrome.alarms.clearAll();
      chrome.storage.sync.set({alarmToggle: false, minutes: 20}, function() {
           console.log("Eye Rest Timer extension installed. Alarm is currently off.");
      });
@@ -41,7 +42,7 @@ chrome.notifications.onClicked.addListener(async function(id) {
 
      countdownProgress.add(id);
      var secondsLeft = 21;
-     while (secondsLeft) {
+     while (secondsLeft && countdownProgress.has(id)) {
           secondsLeft -= 1;
           chrome.notifications.update(id, {
           type:     'basic',
@@ -53,12 +54,16 @@ chrome.notifications.onClicked.addListener(async function(id) {
           {title: 'Turn off alarm.'}
           ],
           priority: 2});
+          if (secondsLeft == 0) {
+               audioNotification();
+          }
           await sleep(1000);
      }
      countdownProgress.delete(id);
 });
 
-chrome.notifications.onClosed.addListener(function() {
+chrome.notifications.onClosed.addListener(function(id) {
+     countdownProgress.delete(id);
      chrome.storage.sync.get(['minutes', 'alarmToggle'], function(item) {
           if (item.alarmToggle) {
                chrome.browserAction.setBadgeText({text: 'ON'});
@@ -67,7 +72,8 @@ chrome.notifications.onClosed.addListener(function() {
      });
 });
 
-chrome.notifications.onButtonClicked.addListener(function() {
+chrome.notifications.onButtonClicked.addListener(function(id) {
+     countdownProgress.delete(id);
      chrome.storage.sync.set({alarmToggle: false});
      chrome.browserAction.setBadgeText({text: ''});
      chrome.alarms.clearAll();
